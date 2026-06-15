@@ -1,0 +1,20 @@
+@import './theme.css';
+@import "tailwindcss";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --color-primary: var(--primary);
+    --color-primary-dark: var(--primary-dark);
+    --color-secondary: var(--secondary);
+    --color-accent: var(--accent);
+    --color-bg-custom: var(--background);
+    --color-text-custom: var(--text);
+    --color-success-custom: var(--success);
+    --color-danger-custom: var(--danger);
+
+    --font-sans: 'Cairo', 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
