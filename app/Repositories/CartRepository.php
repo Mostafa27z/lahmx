@@ -43,7 +43,10 @@ class CartRepository
                 
                 // Merge guest items into user cart
                 foreach ($guestCart->items as $guestItem) {
-                    $existingItem = $userCart->items()->where('product_id', $guestItem->product_id)->first();
+                    $existingItem = $userCart->items()
+                        ->where('product_id', $guestItem->product_id)
+                        ->where('options', $guestItem->options)
+                        ->first();
                     if ($existingItem) {
                         $existingItem->quantity += $guestItem->quantity;
                         $existingItem->save();
@@ -59,11 +62,13 @@ class CartRepository
         }
     }
 
-    public function addItem(Product $product, int $quantity = 1): CartItem
+    public function addItem(Product $product, int $quantity = 1, ?string $options = null): CartItem
     {
         $cart = $this->getOrCreateCart();
         
-        $item = $cart->items()->where('product_id', $product->id)->first();
+        $item = $cart->items()->where('product_id', $product->id)
+            ->where('options', $options)
+            ->first();
         
         if ($item) {
             $item->quantity += $quantity;
@@ -75,6 +80,7 @@ class CartRepository
                 'product_id' => $product->id,
                 'quantity' => $quantity,
                 'price' => $product->active_price,
+                'options' => $options,
             ]);
         }
 

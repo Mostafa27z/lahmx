@@ -76,7 +76,12 @@
                             <tr>
                                 <td class="p-4 flex items-center gap-3">
                                     <span class="text-2xl">🥩</span>
-                                    <span>{{ $item->product ? $item->product->name : 'منتج غير متوفر' }}</span>
+                                    <div>
+                                        <div class="font-bold">{{ $item->product ? $item->product->name : 'منتج غير متوفر' }}</div>
+                                        @if($item->options)
+                                            <span class="text-xs text-secondary bg-red-50 px-2 py-0.5 rounded-md font-bold mt-1 inline-block">{{ $item->options }}</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="p-4 text-center">{{ $item->quantity }}</td>
                                 <td class="p-4">{{ $item->price }} ر.س</td>

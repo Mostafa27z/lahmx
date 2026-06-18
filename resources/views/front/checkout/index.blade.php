@@ -76,7 +76,7 @@
                 <div class="bg-white rounded-3xl p-8 border border-red-50 shadow-sm space-y-6">
                     <h3 class="text-xl font-bold text-primary border-b border-red-50 pb-4 mb-4">طريقة الدفع</h3>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" x-data="{ method: 'visa' }">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-data="{ method: 'visa' }">
                         <!-- Visa Option -->
                         <label class="relative flex flex-col items-center justify-center p-6 border-2 rounded-2xl cursor-pointer transition focus:outline-none"
                                :class="method === 'visa' ? 'border-primary bg-red-50/20' : 'border-red-100 hover:bg-red-50/10'"
@@ -93,15 +93,6 @@
                             <input type="radio" name="payment_method" value="tabby" class="sr-only">
                             <span class="text-4xl mb-3">🏦</span>
                             <span class="font-extrabold text-text-custom">تقسيط تابي (Tabby)</span>
-                        </label>
-
-                        <!-- Tamara Option -->
-                        <label class="relative flex flex-col items-center justify-center p-6 border-2 rounded-2xl cursor-pointer transition focus:outline-none"
-                               :class="method === 'tamara' ? 'border-primary bg-red-50/20' : 'border-red-100 hover:bg-red-50/10'"
-                               @click="method = 'tamara'">
-                            <input type="radio" name="payment_method" value="tamara" class="sr-only">
-                            <span class="text-4xl mb-3">📱</span>
-                            <span class="font-extrabold text-text-custom">تقسيط تمارا (Tamara)</span>
                         </label>
                     </div>
                 </div>

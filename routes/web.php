@@ -7,6 +7,7 @@ use App\Http\Controllers\Front\CartController;
 use App\Http\Controllers\Front\CheckoutController;
 use App\Http\Controllers\Front\OrderController;
 use App\Http\Controllers\Front\AuthController;
+use App\Http\Controllers\Front\WishlistController;
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
@@ -14,11 +15,17 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Front\ProfileController;
 // --- CUSTOMER FRONTEND ROUTES ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
+
+// Wishlist (localStorage-based, no auth required)
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+Route::post('/wishlist/fetch', [WishlistController::class, 'fetch'])->name('wishlist.fetch');
 
 // Cart Routes
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -67,8 +74,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // Customers list
     Route::get('/customers', [AdminCustomerController::class, 'index'])->name('customers.index');
+    Route::post('/customers/{user}/role', [AdminCustomerController::class, 'updateRole'])->name('customers.role');
     
     // Payments list
     Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
     
+    // Company Settings
+    Route::get('/settings', [AdminSettingController::class, 'edit'])->name('settings.edit');
+    Route::put('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
 });

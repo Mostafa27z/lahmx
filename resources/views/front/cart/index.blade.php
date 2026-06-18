@@ -106,6 +106,9 @@
                                 </div>
                                 <div>
                                     <h3 class="font-bold text-text-custom text-lg mb-1">{{ $item->product->name }}</h3>
+                                    @if($item->options)
+                                        <span class="bg-red-50 text-secondary text-xs px-2.5 py-1 rounded-md block mb-1.5 w-fit font-bold">{{ $item->options }}</span>
+                                    @endif
                                     <span class="text-gray-400 text-sm">سعر القطعة: {{ $item->price }} ر.س</span>
                                 </div>
                             </div>

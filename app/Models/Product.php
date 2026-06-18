@@ -20,6 +20,7 @@ class Product extends Model
         'discount_price',
         'weight',
         'image',
+        'images',
         'stock_quantity',
         'is_available',
     ];
@@ -28,6 +29,8 @@ class Product extends Model
         'price' => 'decimal:2',
         'discount_price' => 'decimal:2',
         'weight' => 'decimal:2',
+        'image' => 'string',
+        'images' => 'array',
         'stock_quantity' => 'integer',
         'is_available' => 'boolean',
     ];

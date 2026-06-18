@@ -45,7 +45,11 @@
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-red-50">
                         <div class="h-2 bg-primary"></div>
                         <div class="p-8 text-center">
-                            <div class="text-6xl mb-4">🥩</div>
+                            @if(auth()->user()->avatar)
+                                <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-2 border-primary shadow-md">
+                            @else
+                                <div class="w-24 h-24 rounded-full bg-red-50 border border-red-100 flex items-center justify-center text-4xl mx-auto mb-4">🥩</div>
+                            @endif
                             <h3 class="text-xl font-bold text-primary mb-2">{{ auth()->user()->name }}</h3>
                             <p class="text-gray-600 text-sm mb-6">عضو منذ {{ auth()->user()->created_at->format('d/m/Y') }}</p>
                             
@@ -74,9 +78,49 @@
                         <div class="p-8">
                             <h2 class="text-2xl font-bold text-primary mb-6">تعديل بيانات الحساب</h2>
 
-                            <form action="{{ route('profile.update') }}" method="POST" id="profileForm" class="space-y-6">
+                            <form action="{{ route('profile.update') }}" method="POST" id="profileForm" enctype="multipart/form-data" class="space-y-6" x-data="{ photoName: null, photoPreview: null }">
                                 @csrf
                                 @method('PUT')
+
+                                <!-- Profile Picture (Avatar) -->
+                                <div class="flex flex-col items-center justify-center mb-6">
+                                    <label class="block text-sm font-bold text-text mb-2 text-center">الصورة الشخصية</label>
+                                    
+                                    <input type="file" name="avatar" id="profile_avatar" class="hidden" accept="image/*"
+                                           x-ref="photo"
+                                           @change="
+                                                photoName = $refs.photo.files[0].name;
+                                                const reader = new FileReader();
+                                                reader.onload = (e) => {
+                                                    photoPreview = e.target.result;
+                                                };
+                                                reader.readAsDataURL($refs.photo.files[0]);
+                                           ">
+
+                                    <div class="relative group cursor-pointer" @click="$refs.photo.click()">
+                                        <!-- Default/Current State -->
+                                        <div x-show="!photoPreview" class="w-24 h-24 rounded-full overflow-hidden border-2 border-primary shadow-sm flex items-center justify-center bg-red-50">
+                                            @if(auth()->user()->avatar)
+                                                <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="w-full h-full object-cover">
+                                            @else
+                                                <span class="text-4xl">🥩</span>
+                                            @endif
+                                        </div>
+
+                                        <!-- Preview State -->
+                                        <div x-show="photoPreview" class="w-24 h-24 rounded-full overflow-hidden border-2 border-primary shadow-sm" style="display: none;">
+                                            <img :src="photoPreview" class="w-full h-full object-cover">
+                                        </div>
+
+                                        <!-- Hover Overlay -->
+                                        <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-150">
+                                            <i class="fa-solid fa-camera text-white text-lg"></i>
+                                        </div>
+                                    </div>
+                                    @error('avatar')
+                                        <span class="text-red-600 text-xs font-semibold mt-1 block text-center">{{ $message }}</span>
+                                    @enderror
+                                </div>
 
                                 <!-- Name -->
                                 <div>

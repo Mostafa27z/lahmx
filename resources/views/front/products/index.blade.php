@@ -58,47 +58,7 @@
                 @else
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         @foreach($products as $product)
-                            <div class="bg-white rounded-2xl overflow-hidden border border-red-50 hover:shadow-md transition flex flex-col justify-between">
-                                <div class="h-56 bg-red-50/40 relative">
-                                    @if($product->image)
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                                    @else
-                                        <div class="w-full h-full flex items-center justify-center text-6xl">🥩</div>
-                                    @endif
-                                    @if($product->discount_price)
-                                        <span class="absolute top-4 right-4 bg-secondary text-white px-3 py-1 rounded-full text-xs font-bold">خصم مميز</span>
-                                    @endif
-                                </div>
-                                
-                                <div class="p-5 flex-1 flex flex-col justify-between">
-                                    <div>
-                                        <span class="text-accent text-xs font-bold block mb-1">{{ $product->category->name }}</span>
-                                        <a href="{{ route('products.show', $product->slug) }}" class="text-lg font-bold text-text-custom hover:text-primary transition block mb-2">{{ $product->name }}</a>
-                                        <p class="text-gray-500 text-xs line-clamp-2 mb-4">{{ $product->description }}</p>
-                                    </div>
-
-                                    <div>
-                                        <div class="flex items-center justify-between mb-4">
-                                            <div>
-                                                @if($product->discount_price)
-                                                    <span class="text-xl font-extrabold text-primary">{{ $product->discount_price }} ر.س</span>
-                                                    <span class="text-xs text-gray-400 line-through mr-2">{{ $product->price }} ر.س</span>
-                                                @else
-                                                    <span class="text-xl font-extrabold text-primary">{{ $product->price }} ر.س</span>
-                                                @endif
-                                                @if($product->weight)
-                                                    <span class="text-xs text-gray-400 block mt-1">الوزن: {{ $product->weight }} كجم</span>
-                                                @endif
-                                            </div>
-                                        </div>
-
-                                        <button @click="addToCart({{ $product->id }})" 
-                                                class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-2 rounded-xl transition flex items-center justify-center gap-2 text-sm">
-                                            <span>🛒</span> إضافة للسلة
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <x-product-card :product="$product" />
                         @endforeach
                     </div>
 

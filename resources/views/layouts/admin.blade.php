@@ -17,6 +17,9 @@
     <!-- Alpine.js CDN -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
@@ -34,10 +37,9 @@
     <!-- Sidebar -->
     <aside class="w-64 bg-primary-dark text-white flex flex-col shadow-xl hidden md:flex">
         <!-- Brand logo -->
-        <div class="h-20 flex items-center justify-center border-b border-red-950 bg-primary px-6">
-            <a href="{{ route('home') }}" class="flex items-center gap-2">
-                <span class="text-3xl">🥩</span>
-                <span class="text-xl font-extrabold tracking-wide">لوحة لحمكس</span>
+        <div class="h-20 flex items-center justify-center border-b border-red-950 bg-primary-dark px-6">
+            <a href="{{ route('home') }}" class="flex items-center py-2">
+                <img src="https://res.cloudinary.com/dmma4cjad/image/upload/v1781767352/1b04de4f-92ea-43ce-812a-3fe180240ab8_hieejs.png" alt="لحمكس" class="h-12 w-auto object-contain brightness-110 contrast-110">
             </a>
         </div>
         
@@ -71,6 +73,11 @@
             <a href="{{ route('admin.payments.index') }}" 
                class="flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition {{ request()->routeIs('admin.payments.*') ? 'bg-primary text-white shadow' : 'hover:bg-red-900 text-red-100' }}">
                 <span>💳</span> العمليات المالية
+            </a>
+            
+            <a href="{{ route('admin.settings.edit') }}" 
+               class="flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition {{ request()->routeIs('admin.settings.*') ? 'bg-primary text-white shadow' : 'hover:bg-red-900 text-red-100' }}">
+                <span>⚙️</span> إعدادات الشركة
             </a>
         </nav>
 

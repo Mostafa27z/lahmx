@@ -17,9 +17,14 @@ class HomeController extends Controller
     public function index()
     {
         $categories = $this->productRepository->getAllCategories();
-        $featuredProducts = $this->productRepository->getFeaturedProducts(6);
+        $featuredProducts = $this->productRepository->getFeaturedProducts(8);
         $latestProducts = $this->productRepository->getLatestProducts(6);
 
         return view('front.home', compact('categories', 'featuredProducts', 'latestProducts'));
+    }
+
+    public function about()
+    {
+        return view('front.about');
     }
 }
