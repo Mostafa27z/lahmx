@@ -40,15 +40,30 @@ class ProfileController extends Controller
                 Rule::unique('users')->ignore($user->id),
             ],
             'phone' => ['required', 'string', 'max:20'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], [
             'name.required' => 'الاسم مطلوب.',
             'email.required' => 'البريد الإلكتروني مطلوب.',
             'email.email' => 'يجب إدخال بريد إلكتروني صحيح.',
             'email.unique' => 'هذا البريد الإلكتروني مسجل مسبقاً.',
             'phone.required' => 'رقم الجوال مطلوب.',
+            'avatar.image' => 'يجب أن يكون الملف المرفوع صورة.',
+            'avatar.mimes' => 'يجب أن تكون الصورة بصيغة: jpeg, png, jpg, webp.',
+            'avatar.max' => 'حجم الصورة يجب ألا يتجاوز 2 ميجابايت.',
         ]);
 
-        $user->update($validated);
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $avatarPath;
+        }
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->phone = $validated['phone'];
+        $user->save();
 
         return back()->with('success', 'تم تحديث بيانات حسابك بنجاح.');
     }

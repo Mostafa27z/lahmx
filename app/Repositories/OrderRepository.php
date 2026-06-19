@@ -41,6 +41,7 @@ class OrderRepository
                 'quantity' => $cartItem->quantity,
                 'price' => $cartItem->price,
                 'total' => $cartItem->subtotal,
+                'options' => $cartItem->options,
             ]);
 
             // Deduct stock

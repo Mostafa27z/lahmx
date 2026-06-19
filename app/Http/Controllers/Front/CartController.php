@@ -27,6 +27,7 @@ class CartController extends Controller
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
+            'options' => 'nullable|string|max:255',
         ]);
 
         $product = Product::findOrFail($request->product_id);
@@ -38,15 +39,19 @@ class CartController extends Controller
             return back()->with('error', 'الكمية المطلوبة غير متوفرة في المخزون.');
         }
 
-        $this->cartRepository->addItem($product, $request->quantity);
+        $this->cartRepository->addItem($product, $request->quantity, $request->options);
 
         if ($request->wantsJson()) {
             $cart = $this->cartRepository->getOrCreateCart();
+            // Find the item to return its current quantity
+            $cartItem = $cart->items()->where('product_id', $request->product_id)->first();
             return response()->json([
-                'success' => true,
-                'message' => 'تم إضافة المنتج إلى السلة.',
-                'items_count' => $cart->items_count,
-                'total' => $cart->total,
+                'success'        => true,
+                'message'        => 'تم إضافة المنتج إلى السلة.',
+                'items_count'    => $cart->items_count,
+                'total'          => $cart->total,
+                'item_quantity'  => $cartItem ? $cartItem->quantity : $request->quantity,
+                'product_id'     => $request->product_id,
             ]);
         }
 

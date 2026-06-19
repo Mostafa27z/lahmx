@@ -3,135 +3,175 @@
 @section('title', 'لحمكس - متجر اللحوم الطازجة والفاخرة')
 
 @section('content')
-<!-- Hero Banner -->
-<div class="relative bg-primary-dark text-white overflow-hidden py-24 px-8 border-b-8 border-accent">
-    <!-- Overlay/Decorative elements -->
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#FFF8F6_1px,transparent_1px)] [background-size:16px_16px]"></div>
-    
-    <div class="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
-        <div class="max-w-2xl text-right">
-            <span class="inline-block bg-accent text-primary-dark font-extrabold px-4 py-1.5 rounded-full text-sm mb-6">🥩 لحوم بلدية 100% طازجة</span>
-            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
-                استمتع بالطعم الحقيقي للحم الفاخر
-            </h1>
-            <p class="text-red-100 text-lg md:text-xl mb-8 leading-relaxed">
-                نقدم لك تشكيلة فاخرة من اللحوم الطازجة، مقطعة ومغلفة بعناية تامة لتصلك طازجة أينما كنت.
-            </p>
-            <div class="flex flex-wrap gap-4">
-                <a href="{{ route('products.index') }}" class="bg-accent text-primary-dark hover:bg-white transition duration-150 px-8 py-4 rounded-xl font-extrabold text-lg shadow-lg">تسوق الآن 🛍️</a>
-                <a href="#categories" class="bg-transparent border-2 border-white hover:bg-white hover:text-primary transition duration-150 px-8 py-4 rounded-xl font-extrabold text-lg">تصفح الفئات 📁</a>
+<!-- Hero Carousel Slider -->
+<x-hero />
+
+<!-- Categories Slider (Livestock Section) -->
+<div id="categories" class="py-12 bg-white border-b border-gray-100 scroll-mt-20"
+     x-data="{
+        currentIndex: 0,
+        totalItems: {{ $categories->count() }},
+        visibleItems: 4,
+        timer: null,
+        updateVisibleItems() {
+            if (window.innerWidth >= 1024) {
+                this.visibleItems = 4;
+            } else if (window.innerWidth >= 768) {
+                this.visibleItems = 3;
+            } else {
+                this.visibleItems = 2;
+            }
+        },
+        startAutoPlay() {
+            if (this.totalItems > 4) {
+                this.timer = setInterval(() => {
+                    this.next();
+                }, 3000);
+            }
+        },
+        stopAutoPlay() {
+            if (this.timer) {
+                clearInterval(this.timer);
+                this.timer = null;
+            }
+        },
+        next() {
+            let maxIndex = this.totalItems - this.visibleItems;
+            if (maxIndex <= 0) return;
+            if (this.currentIndex >= maxIndex) {
+                this.currentIndex = 0;
+            } else {
+                this.currentIndex++;
+            }
+        },
+        prev() {
+            let maxIndex = this.totalItems - this.visibleItems;
+            if (maxIndex <= 0) return;
+            if (this.currentIndex <= 0) {
+                this.currentIndex = maxIndex;
+            } else {
+                this.currentIndex--;
+            }
+        },
+        init() {
+            this.updateVisibleItems();
+            window.addEventListener('resize', () => {
+                this.updateVisibleItems();
+                let maxIndex = this.totalItems - this.visibleItems;
+                if (this.currentIndex > maxIndex) {
+                    this.currentIndex = Math.max(0, maxIndex);
+                }
+            });
+            this.startAutoPlay();
+        }
+     }"
+     @mouseenter="stopAutoPlay()"
+     @mouseleave="startAutoPlay()">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div class="flex justify-between items-center mb-8">
+            <div class="text-right">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-[#1b3d2e]">أقسام المتجر (المواشي)</h2>
+                <p class="text-gray-500 mt-1 text-sm sm:text-base">اختر الفئة المفضلة لديك وتصفح أفضل المنتجات</p>
             </div>
-        </div>
-        
-        <div class="relative w-80 h-80 bg-red-950 rounded-full flex items-center justify-center border-4 border-accent shadow-2xl">
-            <span class="text-9xl">🥩</span>
-        </div>
-    </div>
-</div>
-
-<!-- Categories Grid -->
-<div id="categories" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
-        <h2 class="text-3xl font-extrabold text-primary">أقسام المتجر</h2>
-        <p class="text-gray-500 mt-2">اختر الفئة المفضلة لديك وتصفح أفضل المنتجات</p>
-    </div>
-
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
-        @foreach($categories as $category)
-            <a href="{{ route('products.index', ['category_id' => $category->id]) }}" 
-               class="bg-white rounded-2xl p-6 border border-red-50 hover:border-accent hover:shadow-lg transition duration-200 text-center flex flex-col items-center">
-                <div class="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center text-4xl mb-4">
-                    @if($category->image)
-                        <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="w-full h-full object-cover rounded-full">
-                    @else
-                        🥩
-                    @endif
+            
+            <!-- Custom Navigation Arrows (Only show/enable if totalItems > visibleItems) -->
+            <template x-if="totalItems > visibleItems">
+                <div class="flex items-center gap-2" dir="ltr">
+                    <button @click="prev()" 
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-50 hover:bg-primary text-primary hover:text-white flex items-center justify-center transition-all duration-200 cursor-pointer shadow-sm active:scale-95">
+                        <i class="fa-solid fa-chevron-left text-xs sm:text-sm"></i>
+                    </button>
+                    <button @click="next()" 
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-50 hover:bg-primary text-primary hover:text-white flex items-center justify-center transition-all duration-200 cursor-pointer shadow-sm active:scale-95">
+                        <i class="fa-solid fa-chevron-right text-xs sm:text-sm"></i>
+                    </button>
                 </div>
-                <h3 class="font-extrabold text-text-custom text-lg">{{ $category->name }}</h3>
-            </a>
-        @endforeach
-    </div>
-</div>
-
-<!-- Featured Products -->
-<div class="py-16 bg-red-50/30">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center mb-12">
-            <div>
-                <h2 class="text-3xl font-extrabold text-primary">المنتجات الأكثر مبيعاً 🌟</h2>
-                <p class="text-gray-500 mt-2">توصياتنا المميزة لأجلك</p>
-            </div>
-            <a href="{{ route('products.index') }}" class="text-secondary hover:text-primary font-bold transition">عرض الكل &larr;</a>
+            </template>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            @foreach($featuredProducts as $product)
-                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-red-50 hover:shadow-md transition flex flex-col">
-                    <div class="h-64 bg-red-50/40 relative">
-                        @if($product->image)
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                        @else
-                            <div class="w-full h-full flex items-center justify-center text-8xl">🥩</div>
-                        @endif
-                        @if($product->discount_price)
-                            <span class="absolute top-4 right-4 bg-secondary text-white px-3 py-1 rounded-full text-xs font-bold">خصم مميز</span>
-                        @endif
-                    </div>
-                    
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <div>
-                            <span class="text-accent text-sm font-bold block mb-1">{{ $product->category->name }}</span>
-                            <a href="{{ route('products.show', $product->slug) }}" class="text-xl font-bold text-text-custom hover:text-primary transition block mb-2">{{ $product->name }}</a>
-                            <p class="text-gray-500 text-sm line-clamp-2 mb-4">{{ $product->description }}</p>
-                        </div>
-
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <div>
-                                    @if($product->discount_price)
-                                        <span class="text-2xl font-extrabold text-primary">{{ $product->discount_price }} ر.س</span>
-                                        <span class="text-sm text-gray-400 line-through mr-2">{{ $product->price }} ر.س</span>
-                                    @else
-                                        <span class="text-2xl font-extrabold text-primary">{{ $product->price }} ر.س</span>
-                                    @endif
-                                    @if($product->weight)
-                                        <span class="text-xs text-gray-400 block mt-1">الوزن التقريبي: {{ $product->weight }} كجم</span>
-                                    @endif
-                                </div>
+        <!-- Carousel Window -->
+        <div class="overflow-hidden w-full rounded-2xl sm:rounded-3xl">
+            <!-- LTR container for translation logic -->
+            <div dir="ltr" class="flex transition-transform duration-500 ease-in-out -mx-2 sm:-mx-3"
+                 :style="`transform: translateX(-${currentIndex * (100 / visibleItems)}%);`"
+                 style="width: 100%;">
+                 
+                @foreach($categories as $category)
+                    <div class="flex-shrink-0 px-2 sm:px-3 w-1/2 md:w-1/3 lg:w-1/4" dir="rtl">
+                        <a href="{{ route('products.index', ['category_id' => $category->id]) }}" 
+                           class="group block bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-100 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 h-72 sm:h-80 flex flex-col">
+                            
+                            <!-- Image 3/4 (75%) -->
+                            <div class="h-[75%] w-full relative overflow-hidden bg-gray-50/20">
+                                @if($category->image)
+                                    <img src="{{ asset('storage/' . $category->image) }}" 
+                                         alt="{{ $category->name }}" 
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 select-none">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center bg-gray-50/30 text-5xl select-none">
+                                        🥩
+                                    </div>
+                                @endif
                             </div>
-
-                            <button @click="addToCart({{ $product->id }})" 
-                                    class="w-full bg-primary hover:bg-primary-dark text-white font-extrabold py-3 rounded-xl transition flex items-center justify-center gap-2">
-                                <span>🛒</span> إضافة للسلة
-                            </button>
-                        </div>
+                            
+                            <!-- Content/Title 1/4 (25%) -->
+                            <div class="h-[25%] w-full flex items-center justify-center bg-white px-4 border-t border-gray-50/50">
+                                <h3 class="font-extrabold text-[#1b3d2e] text-base sm:text-lg text-center truncate group-hover:text-primary transition-colors duration-200">
+                                    {{ $category->name }}
+                                </h3>
+                            </div>
+                        </a>
                     </div>
-                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Decorative Banner above Products Section -->
+<div class="w-full overflow-hidden">
+    <img src="https://res.cloudinary.com/dmma4cjad/image/upload/v1781788497/f28ab8c7-4f4e-410d-843c-8736a27c3997_a6baft.png"
+         alt="لحمكس - اختيارك الأول للحوم الطازجة في المملكة"
+         class="w-full block">
+</div>
+
+<!-- Featured Products ("منتجاتنا" Section) -->
+<div id="products-section" class="py-16 bg-white scroll-mt-20 border-b border-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-extrabold text-[#1b3d2e]">منتجاتنا</h2>
+            <p class="text-gray-500 mt-2">نقدم لكم أفضل أنواع الذبائح الطازجة يومياً</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @foreach($featuredProducts as $product)
+                <x-product-card :product="$product" />
             @endforeach
         </div>
+
+        <!-- View All Products CTA Button -->
+        <div class="text-center mt-12">
+            <a href="{{ route('products.index') }}"
+               class="inline-block bg-[#1b3d2e] hover:bg-[#122a20] text-white font-extrabold px-10 py-4 rounded-xl shadow-md hover:shadow-lg transition duration-200">
+                الاطلاع على جميع المنتجات 🥩
+            </a>
+        </div>
     </div>
 </div>
 
-<!-- Features Section -->
-<div class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="text-center p-8 bg-white border border-red-50 rounded-2xl shadow-sm">
-            <span class="text-5xl block mb-4">🚚</span>
-            <h3 class="text-xl font-extrabold text-primary mb-2">توصيل مبرد وسريع</h3>
-            <p class="text-gray-500 text-sm">نصلك في سيارات مجهزة بنظام تبريد متكامل للحفاظ على جودة اللحوم وطراوتها.</p>
-        </div>
-        <div class="text-center p-8 bg-white border border-red-50 rounded-2xl shadow-sm">
-            <span class="text-5xl block mb-4">🛡️</span>
-            <h3 class="text-xl font-extrabold text-primary mb-2">أعلى معايير النظافة</h3>
-            <p class="text-gray-500 text-sm">تقطيع وتغليف آلي تحت إشراف أخصائيي الجودة والسلامة الغذائية.</p>
-        </div>
-        <div class="text-center p-8 bg-white border border-red-50 rounded-2xl shadow-sm">
-            <span class="text-5xl block mb-4">💳</span>
-            <h3 class="text-xl font-extrabold text-primary mb-2">طرق دفع مرنة</h3>
-            <p class="text-gray-500 text-sm">ادفع بأمان عبر بطاقة فيزا الائتمانية أو بالتقسيط عبر تابي وتمارا.</p>
-        </div>
-    </div>
+<!-- Core Features Section -->
+<div class="py-4 bg-[#FAF9F6]/40">
+    <x-features />
 </div>
+
+<!-- Payment Methods Ticker -->
+<div class="border-t border-gray-100">
+    <x-payment-ticker />
+</div>
+
+<!-- Contact Anchor for nav -->
+<div id="contact" class="scroll-mt-20"></div>
+
 @endsection
 
 @section('scripts')
